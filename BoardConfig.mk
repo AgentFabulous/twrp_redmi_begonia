@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-DEVICE_PATH := device/xiaomi/begonia
+DEVICE_PATH := device/redmi/begonia
 
 # Architecture
 TARGET_ARCH := arm64

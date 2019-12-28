@@ -14,6 +14,8 @@
 # limitations under the License.
 #
 
+TARGET_OTA_ASSERT_DEVICE := begonia,begoniain
+
 DEVICE_PATH := device/redmi/begonia
 
 # Architecture

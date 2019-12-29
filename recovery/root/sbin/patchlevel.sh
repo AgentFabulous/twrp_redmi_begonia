@@ -3,11 +3,10 @@
 SCRIPTNAME="PatchLevel"
 LOGFILE=/tmp/recovery.log
 TEMPSYS=/s
-BUILDPROP=build.prop
+BUILDPROP=system/build.prop
 DEFAULTPROP=prop.default
-syspath="/dev/block/bootdevice/by-name/system"
+syspath="/dev/block/by-name/system"
 venbin="/vendor/bin"
-SETDEVICE=false
 SETFINGERPRINT=true
 
 log_info() {
@@ -77,4 +76,55 @@ for file in $(find $venbin -type f); do
 done
 
 temp_mount "$TEMPSYS" "system" "$syspath"
+if [ -f "$TEMPSYS/$BUILDPROP" ]; then
+    log_info "Current system is Oreo or above. Proceed with setting OS version and security patch level..."
+    log_info "Build.prop exists! Setting system properties from build.prop"
+    log_info "Current OS version: $osver"
+    osver=$(grep -i 'ro.build.version.release' "$TEMPSYS/$BUILDPROP"  | cut -f2 -d'=' -s)
+    if [ -n "$osver" ]; then
+        resetprop ro.build.version.release "$osver"
+        sed -i "s/ro.build.version.release=.*/ro.build.version.release=""$osver""/g" "/$DEFAULTPROP" ;
+        log_info "New OS Version: $osver"
+    fi
+    log_info "Current security patch level: $patchlevel"
+    patchlevel=$(grep -i 'ro.build.version.security_patch' "$TEMPSYS/$BUILDPROP"  | cut -f2 -d'=' -s)
+    if [ -n "$patchlevel" ]; then
+        resetprop ro.build.version.security_patch "$patchlevel"
+        sed -i "s/ro.build.version.security_patch=.*/ro.build.version.security_patch=""$patchlevel""/g" "/$DEFAULTPROP" ;
+        log_info "New security patch level: $patchlevel"
+    fi
+    # Only needed for some devices (for stock OTA capability), so set "SETFINGERPRINT" variable to "false" if your device isn't one of them
+    if [ "$SETFINGERPRINT" = "true" ]; then
+        log_info "Current fingerprint: $fingerprint"
+        fingerprint=$(grep -i 'ro.build.fingerprint' "$TEMPSYS/$BUILDPROP"  | cut -f2 -d'=' -s)
+        if [ -n "$fingerprint" ]; then
+            resetprop ro.build.fingerprint "$fingerprint"
+            sed -i "s/ro.build.fingerprint=.*/ro.build.fingerprint=""$fingerprint""/g" "/$DEFAULTPROP" ;
+            log_info "New fingerprint: $fingerprint"
+        fi
+    fi
+else
+    if [ -n "$osver_orig" ]; then
+        log_info "Original OS version: $osver_orig"
+        log_info "Current OS version: $osver"
+        log_info "Setting OS Version to $osver_orig"
+        osver=$osver_orig
+        resetprop ro.build.version.release "$osver"
+        sed -i "s/ro.build.version.release=.*/ro.build.version.release=""$osver""/g" "/$DEFAULTPROP" ;
+    else
+        log_info "No Original OS Version found. Proceeding with existing value."
+        log_info "Current OS version: $osver"
+    fi
+    if [ -n "$patchlevel_orig" ]; then
+        log_info "Original security patch level: $patchlevel_orig"
+        log_info "Current security patch level: $patchlevel"
+        log_info "Setting security patch level to $patchlevel_orig"
+        patchlevel=$patchlevel_orig
+        resetprop ro.build.version.security_patch "$patchlevel"
+        sed -i "s/ro.build.version.security_patch=.*/ro.build.version.security_patch=""$patchlevel""/g" "/$DEFAULTPROP" ;
+    else
+        log_info "No Original security patch level found. Proceeding with existing value."
+        log_info "Current security patch level: $patchlevel"
+    fi
+fi
 finish

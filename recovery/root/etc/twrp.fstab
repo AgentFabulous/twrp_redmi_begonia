@@ -12,6 +12,7 @@
 /cust             ext4     /dev/block/platform/bootdevice/by-name/cust         flags=display="Cust";backup=1
 /cust_image       emmc     /dev/block/platform/bootdevice/by-name/cust         flags=display="Cust Image";flashimg=1;backup=1
 /data             ext4     /dev/block/platform/bootdevice/by-name/userdata     flags=fileencryption=aes-256-cts
+/data             f2fs     /dev/block/platform/bootdevice/by-name/userdata     flags=fileencryption=aes-256-cts
 /dtbo             emmc     /dev/block/platform/bootdevice/by-name/dtbo         flags=display="Dtbo";backup=1;flashimg=1
 /persist          ext4     /dev/block/platform/bootdevice/by-name/persist      flags=display="Persist";backup=1
 /persist_image    emmc     /dev/block/platform/bootdevice/by-name/persist      flags=display="Persist Image";backup=1

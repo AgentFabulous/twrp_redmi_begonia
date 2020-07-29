@@ -14,8 +14,6 @@
 # limitations under the License.
 #
 
-TARGET_OTA_ASSERT_DEVICE := begonia,begoniain
-
 DEVICE_PATH := device/redmi/begonia
 
 # Architecture
@@ -63,7 +61,7 @@ BOARD_INCLUDE_RECOVERY_DTBO := true
 BOARD_PREBUILT_DTBOIMAGE := $(DEVICE_PATH)/prebuilt/recovery_dtbo
 
 # Assert
-TARGET_OTA_ASSERT_DEVICE := begonia
+TARGET_OTA_ASSERT_DEVICE := begonia,begoniain
 
 # Avb
 BOARD_AVB_ENABLE := true
